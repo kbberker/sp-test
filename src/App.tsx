@@ -1,5 +1,6 @@
 import './App.css';
 import { useRef, useState } from 'react';
+import WebServerLogResults from './components/WebServerLogResults';
 
 function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,15 +27,20 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <label htmlFor="file-input">
-        Please choose your log file:
-        <input ref={fileInputRef} type="file" name="file-input" accept=".log" />
-      </label>
-      <div>
-        <button type="button" onClick={readFileInput}>Submit</button>
+    <>
+      <div className="App">
+        <label htmlFor="file-input">
+          Please choose your log file:
+          <input ref={fileInputRef} type="file" name="file-input" accept=".log" />
+        </label>
+        <div>
+          <button type="button" onClick={readFileInput}>Submit</button>
+        </div>
       </div>
-    </div>
+      <div>
+        <WebServerLogResults listOfSiteVisits={listOfSiteVisits} />
+      </div>
+    </>
   );
 }
 
