@@ -38,7 +38,7 @@ function App() {
         </div>
       </div>
       <div>
-        <WebServerLogResults listOfSiteVisits={listOfSiteVisits} />
+        <WebServerLogResults rawLogData={listOfSiteVisits} />
       </div>
     </>
   );

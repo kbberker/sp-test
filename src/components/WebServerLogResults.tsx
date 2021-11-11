@@ -1,28 +1,67 @@
 interface WebServerLogResultsProps {
-  listOfSiteVisits: string[]
+  rawLogData: string[];
 }
 
-const WebServerLogResults = ({ listOfSiteVisits }: WebServerLogResultsProps): JSX.Element => {
-  console.log(listOfSiteVisits);
+interface PageVisitDetails {
+  page: string;
+  totalPageVisits: number;
+  uniqueVisits: number;
+}
 
-  const formattedListOfSiteVisits = listOfSiteVisits.map((log) => log.split(' '));
+const WebServerLogResults = ({ rawLogData }: WebServerLogResultsProps): JSX.Element => {
+  console.log({ rawLogData });
 
-  console.log({ formattedListOfSiteVisits });
+  const formattedListOfSiteVisits = rawLogData.map((log) => log.split(' '));
+  const pagesVisited = formattedListOfSiteVisits.map((siteVisit) => siteVisit[0]);
+  const ipAddressList = formattedListOfSiteVisits.map((siteVisit) => siteVisit[1]);
 
-  const calculateSiteVisits = formattedListOfSiteVisits.map((log) => {
-    const pageVisits = formattedListOfSiteVisits.filter((listItem) => log[0] === listItem[0]);
-    const ipAddresses = pageVisits.map((pageVisit) => pageVisit[1]);
+  console.log({ formattedListOfSiteVisits, pagesVisited, ipAddressList });
+
+  const calculateSiteVisits: PageVisitDetails[] = formattedListOfSiteVisits.map((log) => {
+    const totalPageVisits = formattedListOfSiteVisits.filter((listItem) => log[0] === listItem[0]);
+    const ipAddresses = totalPageVisits.map((pageVisit) => pageVisit[1]);
     const uniqueVisits = ipAddresses.filter(
       (ipAddress, index) => ipAddresses.indexOf(ipAddress) === index,
     );
-    return [log[0], pageVisits.length - 1, uniqueVisits.length];
+    return {
+      page: log[0],
+      totalPageVisits: totalPageVisits.length,
+      uniqueVisits: uniqueVisits.length,
+    };
   });
 
-  console.log({ calculateSiteVisits });
+  const listOfNoDuplicatePageVisits = calculateSiteVisits.reduce<PageVisitDetails[]>(
+    (list, siteVisit, currentIndex) => {
+      if (pagesVisited.indexOf(siteVisit.page) === currentIndex) {
+        list.push(siteVisit);
+      }
+      return list;
+    }, [],
+  );
+
+  console.log({ calculateSiteVisits, listOfNoDuplicatePageVisits });
 
   return (
     <div>
-      {listOfSiteVisits.length > 0 ? <h1>hello</h1> : null}
+      <h2>Total Visits</h2>
+      <ul>
+        {listOfNoDuplicatePageVisits.length > 0
+          ? listOfNoDuplicatePageVisits.map((pageVisitDetails) => (
+            <li key={pageVisitDetails.page}>
+              {`${pageVisitDetails.page} - ${pageVisitDetails.totalPageVisits} visits`}
+            </li>
+          )) : null}
+      </ul>
+      <h2>Unique Visits</h2>
+      <ul>
+
+        {listOfNoDuplicatePageVisits.length > 0
+          ? listOfNoDuplicatePageVisits.map((pageVisitDetails) => (
+            <li key={pageVisitDetails.page}>
+              {`${pageVisitDetails.page} - ${pageVisitDetails.uniqueVisits} unique views`}
+            </li>
+          )) : null}
+      </ul>
     </div>
   );
 };
