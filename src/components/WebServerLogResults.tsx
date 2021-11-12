@@ -8,27 +8,29 @@ interface PageVisitDetails {
   uniqueVisits: number;
 }
 
+const createPageVisitDetails = (log: string[], logIndex: number, allPageVisits: string[][]) => {
+  const totalPageVisits = allPageVisits.filter((listItem) => log[0] === listItem[0]);
+  const ipAddresses = totalPageVisits.map((pageVisit) => pageVisit[1]);
+  const uniqueVisits = ipAddresses.filter(
+    (ipAddress, index) => ipAddresses.indexOf(ipAddress) === index,
+  );
+  return {
+    page: log[0],
+    totalPageVisits: totalPageVisits.length,
+    uniqueVisits: uniqueVisits.length,
+  };
+};
+
 const WebServerLogResults = ({ rawLogData }: WebServerLogResultsProps): JSX.Element => {
-  console.log({ rawLogData });
+  // console.log({ rawLogData });
 
   const formattedListOfSiteVisits = rawLogData.map((log) => log.split(' '));
   const pagesVisited = formattedListOfSiteVisits.map((siteVisit) => siteVisit[0]);
-  const ipAddressList = formattedListOfSiteVisits.map((siteVisit) => siteVisit[1]);
+  // const ipAddressList = formattedListOfSiteVisits.map((siteVisit) => siteVisit[1]);
 
-  console.log({ formattedListOfSiteVisits, pagesVisited, ipAddressList });
+  // console.log({ formattedListOfSiteVisits, pagesVisited, ipAddressList });
 
-  const calculateSiteVisits: PageVisitDetails[] = formattedListOfSiteVisits.map((log) => {
-    const totalPageVisits = formattedListOfSiteVisits.filter((listItem) => log[0] === listItem[0]);
-    const ipAddresses = totalPageVisits.map((pageVisit) => pageVisit[1]);
-    const uniqueVisits = ipAddresses.filter(
-      (ipAddress, index) => ipAddresses.indexOf(ipAddress) === index,
-    );
-    return {
-      page: log[0],
-      totalPageVisits: totalPageVisits.length,
-      uniqueVisits: uniqueVisits.length,
-    };
-  });
+  const calculateSiteVisits: PageVisitDetails[] = formattedListOfSiteVisits.map(createPageVisitDetails);
 
   const listOfNoDuplicatePageVisits = calculateSiteVisits.reduce<PageVisitDetails[]>(
     (list, siteVisit, currentIndex) => {
@@ -39,7 +41,7 @@ const WebServerLogResults = ({ rawLogData }: WebServerLogResultsProps): JSX.Elem
     }, [],
   );
 
-  console.log({ calculateSiteVisits, listOfNoDuplicatePageVisits });
+  // console.log({ calculateSiteVisits, listOfNoDuplicatePageVisits });
 
   return (
     <div>
@@ -67,3 +69,4 @@ const WebServerLogResults = ({ rawLogData }: WebServerLogResultsProps): JSX.Elem
 };
 
 export default WebServerLogResults;
+export { createPageVisitDetails };
