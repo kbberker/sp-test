@@ -10,7 +10,7 @@
 
 
 ## Testing the app
-* Is as simple as running `npm test`, which launches the test runner in the interactive watch mode.\
+* Is as simple as running `npm test`, which launches the test runner in the interactive watch mode.
 
 ## My experience of the test
 Really interesting task for me. I had not used the File API before. It was a fun challenge to think through how to get the data into
