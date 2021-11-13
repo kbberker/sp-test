@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import WebServerLogResults, { createPageVisitDetails } from './WebServerLogResults';
 
 const mockData = [
@@ -32,10 +32,9 @@ const mockFormattedData = [
   ['/help_page/1', '126.318.035.038'],
 ];
 
-test('renders learn react link', () => {
-  render(<WebServerLogResults rawLogData={mockData} />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('WebServerLogResults snapshot is correct', () => {
+  const page = render(<WebServerLogResults rawLogData={mockData} />);
+  expect(page).toMatchSnapshot();
 });
 
 test('createPageVisitDetails correctly creates pageVisitDetails', () => {

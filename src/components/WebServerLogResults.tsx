@@ -22,47 +22,42 @@ const createPageVisitDetails = (log: string[], logIndex: number, allPageVisits: 
 };
 
 const WebServerLogResults = ({ rawLogData }: WebServerLogResultsProps): JSX.Element => {
-  // console.log({ rawLogData });
-
   const formattedListOfSiteVisits = rawLogData.map((log) => log.split(' '));
   const pagesVisited = formattedListOfSiteVisits.map((siteVisit) => siteVisit[0]);
-  // const ipAddressList = formattedListOfSiteVisits.map((siteVisit) => siteVisit[1]);
 
-  // console.log({ formattedListOfSiteVisits, pagesVisited, ipAddressList });
+  const listOfPageVisitDetails: PageVisitDetails[] = formattedListOfSiteVisits.map(createPageVisitDetails);
 
-  const calculateSiteVisits: PageVisitDetails[] = formattedListOfSiteVisits.map(createPageVisitDetails);
-
-  const listOfNoDuplicatePageVisits = calculateSiteVisits.reduce<PageVisitDetails[]>(
+  const listOfUniquePageVisitDetails = listOfPageVisitDetails.reduce<PageVisitDetails[]>(
     (list, siteVisit, currentIndex) => {
-      if (pagesVisited.indexOf(siteVisit.page) === currentIndex) {
+      if (pagesVisited.indexOf(siteVisit.page) === currentIndex && siteVisit.page !== '') {
         list.push(siteVisit);
       }
       return list;
     }, [],
   );
 
-  // console.log({ calculateSiteVisits, listOfNoDuplicatePageVisits });
+  const sortedByTotalVisits = [...listOfUniquePageVisitDetails].sort((a, b) => b.totalPageVisits - a.totalPageVisits);
+  const sortedByUniqueVisits = [...listOfUniquePageVisitDetails].sort((a, b) => b.uniqueVisits - a.uniqueVisits);
 
   return (
     <div>
       <h2>Total Visits</h2>
       <ul>
-        {listOfNoDuplicatePageVisits.length > 0
-          ? listOfNoDuplicatePageVisits.map((pageVisitDetails) => (
+        {listOfUniquePageVisitDetails.length > 0
+          ? sortedByTotalVisits.map((pageVisitDetails) => (
             <li key={pageVisitDetails.page}>
               {`${pageVisitDetails.page} - ${pageVisitDetails.totalPageVisits} visits`}
             </li>
-          )) : null}
+          )) : <p>No data to display</p>}
       </ul>
       <h2>Unique Visits</h2>
       <ul>
-
-        {listOfNoDuplicatePageVisits.length > 0
-          ? listOfNoDuplicatePageVisits.map((pageVisitDetails) => (
+        {listOfUniquePageVisitDetails.length > 0
+          ? sortedByUniqueVisits.map((pageVisitDetails) => (
             <li key={pageVisitDetails.page}>
               {`${pageVisitDetails.page} - ${pageVisitDetails.uniqueVisits} unique views`}
             </li>
-          )) : null}
+          )) : <p>No data to display</p>}
       </ul>
     </div>
   );
